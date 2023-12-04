@@ -38,14 +38,8 @@ int main(){
     for(int i=0 ; i<n ; ++i) {
     	cin >> v[i];
     }
-    int tail = 0;
-    if(n%2 == 0) {
-    	tail = (n/2)-1;
-    }
-    else {
-    	tail = n/2;
-    }
+    int tail = (n/2);
     dp.resize(n+1,vector<double> (tail+1,-1));
-    cout << solve(v,0,tail) << "\n";
+    cout << setprecision(12) << solve(v,0,tail) << "\n";
   	return 0;
 }
