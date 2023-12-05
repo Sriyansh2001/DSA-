@@ -1,34 +1,45 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-long long solve(vector<vector<int>> &v,int i,int value,vector<vector<long long>> &dp) {
-	if(value == 0) return 0;
-	if(i == v.size()) return 1e10+10;
-	if(dp[i][value] != -1) {
-		return dp[i][value];
-	}
-	long long ans = solve(v,i+1,value-v[i][1],dp)+v[i][0];
-	return dp[i][value] = min(ans,solve(v,i+1,value,dp));	
+vector<vector<int>> dp;
+
+long long solve(vector<int> &book,vector<int> &price,int i,int x) {
+    if(i == -1) {
+        return 0;
+    }
+    if(dp[i][x] != -1) {
+        return dp[i][x];
+    }
+    if(x - price[i] >= 0) {
+        return dp[i][x] = max(solve(book,price,i-1,x),solve(book,price,i-1,x-price[i])+book[i]);
+    }
+    return dp[i][x] = solve(book,price,i-1,x);
 }
 
 int main(){
     int n,k;
     cin >> n >> k;
-    vector<vector<int>> v;
+    vector<int> book(n),page(n);
     for(int i=0 ; i<n ; ++i) {
-    	int x,y;
-    	cin >> x >> y;
-    	v.push_back({x,y});
+    	cin >> book[i];
     }
-    int mx = 1e5;	
-    vector<vector<long long>> dp(n+1,vector<long long> (mx+1,-1));
-    int ans = 0;
-    for(int i=mx ; i>=0 ; --i) {
-    	if(solve(v,0,i,dp) <= k) {
-    		ans = i;
-    		break;
-    	}
+    for(int i=0 ; i<n ; ++i) {
+        cin >> page[i];
     }
-    cout << ans << "\n";
+    dp.resize(n+1,vector<int> (k+1,0));
+
+    for(int i=1 ; i<=n ; ++i) {
+        for(int j=1 ; j<=k ; ++j) {
+            if(j - book[i-1] >= 0) {
+                dp[i][j] = max(dp[i-1][j],dp[i-1][j-book[i-1]]+page[i-1]);
+            }
+            else {
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+    }
+
+    cout << dp[n][k];
+
   	return 0;
 }
